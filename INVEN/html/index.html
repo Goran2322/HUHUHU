@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="inventory-container" class="hidden">
+        <!-- Clothing Container -->
+        <div class="container clothing-container">
+            <div class="container-title">Clothing</div>
+            <div class="clothing-slots">
+                <div class="clothing-row row-1">
+                    <div class="slot" data-container="clothing" data-slot="1">
+                        <img class="slot-icon clothing-icon" src="icons/tie.png" alt="Tie">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="2">
+                        <img class="slot-icon clothing-icon" src="icons/torso.png" alt="Torso">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="3">
+                        <img class="slot-icon clothing-icon" src="icons/bracelet.png" alt="Bracelet">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="4">
+                        <img class="slot-icon clothing-icon" src="icons/gloves.png" alt="Gloves">
+                    </div>
+                </div>
+                <div class="clothing-row">
+                    <div class="slot" data-container="clothing" data-slot="5">
+                        <img class="slot-icon clothing-icon" src="icons/hat.png" alt="Hat">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="6">
+                        <img class="slot-icon clothing-icon" src="icons/tshirt.png" alt="T-Shirt">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="7">
+                        <img class="slot-icon clothing-icon" src="icons/earring.png" alt="Earring">
+                    </div>
+                </div>
+                <div class="clothing-row">
+                    <div class="slot" data-container="clothing" data-slot="8">
+                        <img class="slot-icon clothing-icon" src="icons/mask.png" alt="Mask">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="9">
+                        <img class="slot-icon clothing-icon" src="icons/glasses.png" alt="Glasses">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="10">
+                        <img class="slot-icon clothing-icon" src="icons/shoes.png" alt="Shoes">
+                    </div>
+                </div>
+                <div class="clothing-row">
+                    <div class="slot" data-container="clothing" data-slot="11">
+                        <img class="slot-icon clothing-icon" src="icons/watch.png" alt="Watch">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="12">
+                        <img class="slot-icon clothing-icon" src="icons/pants.png" alt="Pants">
+                    </div>
+                    <div class="slot" data-container="clothing" data-slot="13">
+                        <img class="slot-icon clothing-icon" src="icons/armor.png" alt="Armor">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Inventory Container -->
+        <div class="container inventory-container">
+            <div class="container-title">
+                Inventory
+                <span class="weight-display">0.0/50vol</span>
+            </div>
+            <div class="inventory-slots">
+                <div class="inventory-row">
+                    <div class="slot" data-container="inventory" data-slot="1"></div>
+                    <div class="slot" data-container="inventory" data-slot="2"></div>
+                    <div class="slot" data-container="inventory" data-slot="3"></div>
+                    <div class="slot" data-container="inventory" data-slot="4"></div>
+                    <div class="slot" data-container="inventory" data-slot="5"></div>
+                    <div class="slot" data-container="inventory" data-slot="6"></div>
+                </div>
+                <div class="inventory-row">
+                    <div class="slot" data-container="inventory" data-slot="7"></div>
+                    <div class="slot" data-container="inventory" data-slot="8"></div>
+                    <div class="slot" data-container="inventory" data-slot="9"></div>
+                    <div class="slot" data-container="inventory" data-slot="10"></div>
+                    <div class="slot" data-container="inventory" data-slot="11"></div>
+                    <div class="slot" data-container="inventory" data-slot="12"></div>
+                </div>
+                <div class="inventory-row">
+                    <div class="slot" data-container="inventory" data-slot="13"></div>
+                    <div class="slot" data-container="inventory" data-slot="14"></div>
+                    <div class="slot" data-container="inventory" data-slot="15"></div>
+                    <div class="slot" data-container="inventory" data-slot="16"></div>
+                    <div class="slot" data-container="inventory" data-slot="17"></div>
+                    <div class="slot" data-container="inventory" data-slot="18"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loadout Container -->
+        <div class="container loadout-container">
+            <div class="container-title">Loadout</div>
+            <div class="loadout-slots">
+                <div class="loadout-row">
+                    <div class="slot" data-container="loadout-heavy" data-slot="1">
+                        <img class="slot-icon loadout-icon" src="icons/ak.png" alt="AK">
+                    </div>
+                </div>
+                <div class="loadout-row">
+                    <div class="slot" data-container="loadout-pistol" data-slot="2">
+                        <img class="slot-icon loadout-icon" src="icons/pistol.png" alt="Pistol">
+                    </div>
+                </div>
+                <div class="loadout-row">
+                    <div class="slot" data-container="loadout-pistol" data-slot="3">
+                        <img class="slot-icon loadout-icon" src="icons/pistol.png" alt="Pistol">
+                    </div>
+                </div>
+                <div class="loadout-row">
+                    <div class="slot" data-container="loadout-melee" data-slot="4">
+                        <img class="slot-icon loadout-icon" src="icons/melee.png" alt="Melee">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

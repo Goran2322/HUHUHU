@@ -1,0 +1,368 @@
+/* Remove the loadout label styles and keep the rest of your CSS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: transparent;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+#inventory-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 30px;
+    padding: 25px;
+    z-index: 2;
+}
+
+#inventory-container.hidden {
+    display: none;
+}
+
+.container {
+    border-radius: 0px;
+    padding: 0;
+    border: none;
+}
+
+.container-title {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 14px;
+    text-align: center;
+    padding: 12px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 0px;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.clothing-container .container-title,
+.inventory-container .container-title {
+    text-align: left;
+    padding-left: 18px;
+}
+
+.loadout-container .container-title {
+    text-align: center;
+}
+
+.weight-display {
+    position: absolute;
+    right: 12px;
+    font-size: 16px;
+    color: #00ff00;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+.clothing-slots,
+.inventory-slots,
+.loadout-slots {
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 0px;
+    padding: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.clothing-container {
+    width: 368px;
+}
+
+.clothing-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-left: 10px;
+    padding-right: 35px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+.clothing-row {
+    display: flex;
+    justify-content: flex-start;
+    gap: 14px;
+}
+
+.clothing-row.row-1 {
+    margin-bottom: 6px;
+}
+
+.clothing-container .slot {
+    width: 76px !important;
+    height: 76px !important;
+}
+
+.inventory-container {
+    width: 548px;
+}
+
+.inventory-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-left: 10px;
+    padding-right: 35px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+.inventory-row {
+    display: flex;
+    gap: 14px;
+}
+
+.loadout-container {
+    width: 90px;
+}
+
+.loadout-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 8px;
+}
+
+.loadout-row {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+/* Slot Styles */
+.slot {
+    width: 76px;
+    height: 76px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ffffff;
+    border-radius: 0px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+.slot:hover {
+    border-color: #ffffff;
+}
+
+.slot.occupied {
+    border-color: #ffffff;
+}
+
+.slot.drag-over {
+    border-color: #00ff00 !important;
+    background-color: rgba(0, 255, 0, 0.3) !important;
+    box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.6);
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+.slot.invalid-drop {
+    border-color: #ff0000 !important;
+    background-color: rgba(255, 0, 0, 0.3) !important;
+    box-shadow: inset 0 0 30px rgba(255, 0, 0, 0.6);
+}
+
+/* Weapon-equipped slot indicator */
+.loadout-slots .slot.occupied {
+    border-color: #ff6400;
+    background-color: rgba(255, 100, 0, 0.1);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+.slot-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 54px;
+    height: 54px;
+    opacity: 1;
+    pointer-events: none;
+    z-index: 1;
+    image-rendering: -webkit-optimize-contrast !important;
+    image-rendering: crisp-edges !important;
+}
+
+.clothing-icon,
+.loadout-icon {
+    opacity: 1;
+}
+
+.slot.occupied .slot-icon {
+    display: none;
+}
+
+/* Item Styles */
+.item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    transition: opacity 0.2s ease;
+}
+
+.item:active {
+    cursor: grabbing;
+}
+
+/* Weapon item styling */
+.weapon-item {
+    background: rgba(255, 100, 0, 0.05);
+}
+
+.weapon-item .item-name {
+    background-color: rgba(255, 100, 0, 0.3);
+}
+
+/* Ghost item (dragged copy) */
+.item-ghost {
+    border: 2px solid #00ff00;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 4px;
+}
+
+.weapon-ghost {
+    border-color: #ff6400 !important;
+    background: rgba(255, 100, 0, 0.1) !important;
+}
+
+.item-ghost .item-weight,
+.item-ghost .item-name {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.item-weight {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    font-size: 10px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 3px 6px;
+    text-align: left;
+    width: 100%;
+    pointer-events: none;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    z-index: 3;
+}
+
+.item-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 64px;
+    height: 64px;
+    margin-left: -32px;
+    margin-top: -32px;
+    display: block;
+    pointer-events: none;
+    image-rendering: pixelated !important;
+    image-rendering: -moz-crisp-edges !important;
+    image-rendering: crisp-edges !important;
+    -ms-interpolation-mode: nearest-neighbor !important;
+}
+
+.item-icon img {
+    width: 64px !important;
+    height: 64px !important;
+    display: block !important;
+    image-rendering: pixelated !important;
+    image-rendering: -moz-crisp-edges !important;
+    image-rendering: crisp-edges !important;
+    -ms-interpolation-mode: nearest-neighbor !important;
+    filter: none !important;
+    -webkit-filter: none !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
+    backface-visibility: hidden !important;
+    -webkit-backface-visibility: hidden !important;
+    will-change: transform !important;
+    pointer-events: none !important;
+}
+
+.item-icon-fallback {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 4px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.item-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-size: 10px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 3px 3px;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+    font-weight: 600;
+    text-transform: capitalize;
+    line-height: 1;
+    border-radius: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    z-index: 3;
+}
+
+.item-count {
+    display: none;
+}
+
+@media screen and (max-width: 1366px) {
+    #inventory-container {
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+}
+
+img {
+    image-rendering: pixelated !important;
+    image-rendering: -moz-crisp-edges !important;
+    image-rendering: crisp-edges !important;
+}
