@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Chat</title>
+    <style>
+        /* Custom Chat CSS */
+        @font-face {
+            font-family: 'pricedown';
+            src: local('pricedown'), url('https://fonts.cdnfonts.com/s/14677/PricedownBl-Bold.woff') format('woff');
+            font-display: swap;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'pricedown', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            font-weight: bold !important;
+            font-display: swap;
+        }
+
+        body, #chat-container, #chat-messages, #chat-input, #chat-input-container, .chat-message, .player-message, .system-message {
+            font-family: 'pricedown', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+            font-weight: bold !important;
+            font-display: swap;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        #chat-container {
+            position: absolute;
+            top: 20px;
+            left: 6px;
+            width: 800px;
+            height: 340px; /* Reduced from 300px to account for input */
+            display: flex;
+            flex-direction: column;
+            background: transparent;
+            border-radius: 0px;
+            padding: 10px;
+            padding-bottom: 0;
+        }
+
+        #chat-messages {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            padding-right: 0px;
+            padding-bottom: 10px;
+            margin-bottom: 0;
+            scrollbar-width: none;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+            box-sizing: border-box;
+            direction: rtl;
+            text-align: left;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                        filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #chat-messages.fade-out {
+            animation: chatFadeOut 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        #chat-container.chat-active #chat-messages {
+            opacity: 1 !important;
+            transform: translateY(0px) scale(1) !important;
+            filter: blur(0px) !important;
+            animation: none !important;
+            scrollbar-width: thin;
+            -ms-overflow-style: auto;
+            /* Removed padding-bottom: 60px; */
+        }
+
+        #chat-messages > * {
+            direction: ltr;
+        }
+
+        #chat-messages::-webkit-scrollbar {
+            display: none;
+            left: 0;
+            right: auto;
+            width: 5px;
+        }
+
+        #chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+            margin: 0;
+            margin-bottom: 0 !important;
+        }
+
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            min-height: 20px;
+            border: none;
+        }
+
+        .chat-message {
+            margin-bottom: 5px;
+            padding: 5px 8px;
+            border-radius: 3px;
+            background-color: transparent !important;
+            color: #ffffff !important;
+            font-size: 14px;
+            word-wrap: break-word;
+            text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-in-out;
+            transition: opacity 0.5s;
+        }
+
+        .chat-message span {
+            color: inherit;
+        }
+
+        .player-message {
+            color: #ffffff !important;
+            font-weight: normal;
+        }
+
+        .system-message {
+            background-color: transparent !important;
+            color: #ffffff;
+        }
+
+        .admin-message {
+            background-color: transparent !important;
+            color: #ffffff;
+        }
+
+        /* Add mauve color for roleplay messages */
+        .roleplay-message {
+            background-color: transparent !important;
+            color: #E0B0FF !important; /* Mauve color */
+        }
+        
+        .roleplay-message span {
+            color: #E0B0FF !important;
+        }
+
+        /* Color classes for FiveM color codes */
+        .color-0 { color: #ffffff !important; }
+        .color-1 { color: #ff4444 !important; }
+        .color-2 { color: #99cc00 !important; }
+        .color-3 { color: #ffbb33 !important; }
+        .color-4 { color: #0099cc !important; }
+        .color-5 { color: #33b5e5 !important; }
+        .color-6 { color: #E0B0FF !important; } /* Mauve */
+        .color-7 { color: #ffffff !important; }
+        .color-8 { color: #ff8800 !important; }
+        .color-9 { color: #cc0000 !important; }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes chatFadeOut {
+            0% {
+                opacity: 1;
+                transform: translateY(0px) scale(1);
+                filter: blur(0px);
+            }
+            70% {
+                opacity: 0.3;
+                transform: translateY(-5px) scale(0.98);
+                filter: blur(0.5px);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.95);
+                filter: blur(2px);
+            }
+        }
+
+        #chat-input-container {
+            position: absolute;
+            bottom: -40px; /* Changed from 10px to 0 - directly at bottom of container */
+            left: 10px;
+            width: 750px;
+            height: 40px;
+            display: none;
+            align-items: center;
+            justify-content: flex-start;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+        }
+
+        #chat-container.chat-active #chat-input-container {
+            display: flex !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        #chat-container.chat-active #chat-messages::-webkit-scrollbar {
+            display: block;
+        }
+
+        /* Input wrapper for autocomplete */
+        #chat-input-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        #chat-input {
+            width: 255%;
+            height: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 3px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: background-color 0.3s;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 4;
+        }
+
+        #chat-input:focus {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        /* Autocomplete suggestion */
+        #chat-autocomplete {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 255%;
+            height: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 3px;
+            background-color: transparent;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            pointer-events: none;
+            box-sizing: border-box;
+            z-index: 1;
+            white-space: pre;
+            overflow: hidden;
+        }
+
+        /* Command suggestions dropdown - MOVED BELOW INPUT */
+        #command-suggestions {
+            position: absolute;
+            top: 100%; /* Changed from bottom: 100% */
+            left: 0;
+            width: 255%; /* Match the input width */
+            max-height: 200px;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 3px;
+            margin-top: 5px; /* Changed from margin-bottom */
+            overflow-y: auto;
+            display: none;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+            z-index: 10;
+        }
+
+        #command-suggestions::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #command-suggestions::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .command-suggestion {
+            padding: 8px 12px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .command-suggestion:hover,
+        .command-suggestion.selected {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .command-name {
+            color: #87CEEB;
+            margin-right: 10px;
+        }
+
+        .command-name.admin-command {
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        .command-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+        }
+
+        .admin-only {
+            color: #ffff00;
+            font-weight: bold;
+        }
+
+        .chat-inactive #chat-messages {
+            opacity: 0.5;
+        }
+
+        .chat-faded #chat-messages {
+            animation: chatFadeOut 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @media (max-width: 800px) {
+            #chat-container, #chat-input-container {
+                width: 98vw;
+                left: 1vw;
+            }
+            #chat-input, #chat-autocomplete {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <div id="chat-input-container">
+            <form id="chat-form">
+                <div id="chat-input-wrapper">
+                    <input type="text" id="chat-input" placeholder="Press T to chat..." maxlength="100" autocomplete="off">
+                    <div id="chat-autocomplete"></div>
+                    <div id="command-suggestions"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let chatMessages = document.getElementById('chat-messages');
+        let chatInput = document.getElementById('chat-input');
+        let chatContainer = document.getElementById('chat-container');
+        let chatForm = document.getElementById('chat-form');
+        let chatAutocomplete = document.getElementById('chat-autocomplete');
+        let commandSuggestions = document.getElementById('command-suggestions');
+        let fadeTimeout = null;
+        let messageHistory = [];
+        const MAX_MESSAGES = 100;
+        let isProcessing = false;
+        let selectedSuggestionIndex = -1;
+        let isAdmin = false;
+        
+        // Available commands - this will be populated from the client
+        let availableCommands = [];
+        
+        // Handle messages from client
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            
+            if (!data || !data.type) return;
+            
+            switch(data.type) {
+                case 'CREATE_CHAT':
+                    // Chat is already created in HTML
+                    startFadeTimer();
+                    break;
+                    
+                case 'OPEN_CHAT':
+                    openChat();
+                    break;
+                    
+                case 'CLOSE_CHAT':
+                    closeChat();
+                    break;
+                    
+                case 'ADD_MESSAGE':
+                    if (data.message) {
+                        addMessage(data.message);
+                    }
+                    break;
+                    
+                case 'CLEAR_CHAT':
+                    clearChat();
+                    break;
+                    
+                case 'SET_COMMANDS':
+                    if (data.commands) {
+                        availableCommands = data.commands;
+                    }
+                    break;
+                    
+                case 'SET_ADMIN_STATUS':
+                    isAdmin = data.isAdmin;
+                    break;
+            }
+        });
+        
+        function openChat() {
+            chatContainer.classList.add('chat-active');
+            chatContainer.classList.remove('chat-faded');
+            chatInput.focus();
+            clearTimeout(fadeTimeout);
+            isProcessing = false;
+        }
+        
+        function closeChat() {
+            chatContainer.classList.remove('chat-active');
+            chatInput.value = '';
+            chatAutocomplete.textContent = '';
+            commandSuggestions.style.display = 'none';
+            chatInput.blur();
+            startFadeTimer();
+            isProcessing = false;
+            selectedSuggestionIndex = -1;
+        }
+        
+        function clearChat() {
+            chatMessages.innerHTML = '';
+            messageHistory = [];
+        }
+        
+        // Parse FiveM color codes
+        function parseColorCodes(text) {
+            // First escape HTML to prevent XSS, but preserve color codes
+            const tempDiv = document.createElement('div');
+            tempDiv.textContent = text;
+            let escapedText = tempDiv.innerHTML;
+            
+            const colorMap = {
+                '^0': '</span><span class="color-0">',
+                '^1': '</span><span class="color-1">',
+                '^2': '</span><span class="color-2">',
+                '^3': '</span><span class="color-3">',
+                '^4': '</span><span class="color-4">',
+                '^5': '</span><span class="color-5">',
+                '^6': '</span><span class="color-6">',
+                '^7': '</span><span class="color-7">',
+                '^8': '</span><span class="color-8">',
+                '^9': '</span><span class="color-9">'
+            };
+            
+            let result = '<span>' + escapedText;
+            for (const [code, replacement] of Object.entries(colorMap)) {
+                result = result.replace(new RegExp('\\' + code, 'g'), replacement);
+            }
+            result += '</span>';
+            
+            // Clean up any empty spans
+            result = result.replace(/<span[^>]*><\/span>/g, '');
+            
+            return result;
+        }
+        
+        function addMessage(message) {
+            if (!message || (!message.text && typeof message !== 'string')) return;
+            
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message');
+            
+            if (typeof message === 'string') {
+                // Handle plain string messages
+                messageElement.classList.add('system-message');
+                messageElement.innerHTML = parseColorCodes(message);
+            } else if (message.type === 'system') {
+                messageElement.classList.add('system-message');
+                // Don't show author if it's "System"
+                if (message.author && message.author !== 'System') {
+                    const author = message.author || 'Unknown';
+                    // Parse color codes in author name
+                    messageElement.innerHTML = `${parseColorCodes(author + ':')} ${parseColorCodes(message.text || '')}`;
+                } else {
+                    messageElement.innerHTML = parseColorCodes(message.text || '');
+                }
+            } else if (message.type === 'admin') {
+                messageElement.classList.add('admin-message');
+                // Admin messages don't show author
+                messageElement.innerHTML = parseColorCodes(message.text || '');
+            } else if (message.type === 'roleplay') {
+                messageElement.classList.add('roleplay-message');
+                // Roleplay messages don't show author and should be in mauve
+                messageElement.innerHTML = parseColorCodes(message.text || '');
+            } else {
+                messageElement.classList.add('player-message');
+                const author = message.author || 'Unknown';
+                const text = message.text || '';
+                // Escape HTML but allow color codes
+                const tempDiv = document.createElement('div');
+                tempDiv.textContent = author;
+                const escapedAuthor = tempDiv.innerHTML;
+                messageElement.innerHTML = `<span style="color: #87CEEB;">${escapedAuthor}:</span> ${parseColorCodes(text)}`;
+            }
+            
+            chatMessages.appendChild(messageElement);
+            messageHistory.push(messageElement);
+            
+            // Remove old messages if exceed limit
+            if (messageHistory.length > MAX_MESSAGES) {
+                const oldMessage = messageHistory.shift();
+                oldMessage.remove();
+            }
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Reset fade timer
+            chatContainer.classList.remove('chat-faded');
+            startFadeTimer();
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function startFadeTimer() {
+            clearTimeout(fadeTimeout);
+            fadeTimeout = setTimeout(() => {
+                if (!chatContainer.classList.contains('chat-active')) {
+                    chatContainer.classList.add('chat-faded');
+                }
+            }, 10000); // Fade after 10 seconds
+        }
+        
+        // Handle input changes for autocomplete
+        chatInput.addEventListener('input', (e) => {
+            const value = e.target.value;
+            
+            if (value.startsWith('/')) {
+                // Show command autocomplete
+                const commandPart = value.substring(1).toLowerCase();
+                updateCommandSuggestions(commandPart);
+                
+                // Show inline autocomplete for the first matching command
+                // Don't show autocomplete for tx commands to avoid interference
+                if (!commandPart.startsWith('tx')) {
+                    const firstMatch = availableCommands.find(cmd => {
+                        // Check if user is admin for admin commands
+                        if (cmd.isAdmin && !isAdmin) return false;
+                        return cmd.name.toLowerCase().startsWith(commandPart);
+                    });
+                    
+                    if (firstMatch && commandPart.length > 0) {
+                        const suggestion = '/' + firstMatch.name;
+                        const typedLength = value.length;
+                        chatAutocomplete.textContent = value + suggestion.substring(typedLength);
+                    } else {
+                        chatAutocomplete.textContent = '';
+                    }
+                } else {
+                    chatAutocomplete.textContent = '';
+                }
+            } else {
+                // Hide command suggestions for regular chat
+                chatAutocomplete.textContent = '';
+                commandSuggestions.style.display = 'none';
+            }
+        });
+        
+        // Update command suggestions dropdown
+        function updateCommandSuggestions(commandPart) {
+            // Don't show suggestions for tx commands
+            if (commandPart.startsWith('tx')) {
+                commandSuggestions.style.display = 'none';
+                return;
+            }
+            
+            const matches = availableCommands.filter(cmd => {
+                // Filter out admin commands for non-admins
+                if (cmd.isAdmin && !isAdmin) return false;
+                return cmd.name.toLowerCase().startsWith(commandPart);
+            });
+            
+            if (matches.length > 0 && commandPart.length > 0) {
+                commandSuggestions.innerHTML = '';
+                matches.forEach((cmd, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'command-suggestion';
+                    if (index === selectedSuggestionIndex) {
+                        div.classList.add('selected');
+                    }
+                    
+                    const commandClass = cmd.isAdmin ? 'command-name admin-command' : 'command-name';
+                    
+                    // Process description to highlight (Admin Only) in yellow
+                    let description = cmd.description || '';
+                    if (cmd.isAdmin && description.includes('(Admin Only)')) {
+                        description = description.replace('(Admin Only)', '<span class="admin-only">(Admin Only)</span>');
+                    }
+                    
+                    div.innerHTML = `
+                        <span class="${commandClass}">/${cmd.name}</span>
+                        <span class="command-description">${description}</span>
+                    `;
+                    div.addEventListener('click', () => {
+                        chatInput.value = '/' + cmd.name + ' ';
+                        chatInput.focus();
+                        commandSuggestions.style.display = 'none';
+                        chatAutocomplete.textContent = '';
+                    });
+                    commandSuggestions.appendChild(div);
+                });
+                commandSuggestions.style.display = 'block';
+            } else {
+                commandSuggestions.style.display = 'none';
+            }
+        }
+        
+        // Handle keyboard navigation
+        chatInput.addEventListener('keydown', (e) => {
+            const suggestions = commandSuggestions.querySelectorAll('.command-suggestion');
+            
+            if (e.key === 'Tab' && chatAutocomplete.textContent) {
+                e.preventDefault();
+                // Accept the inline autocomplete
+                chatInput.value = chatAutocomplete.textContent;
+                chatAutocomplete.textContent = '';
+                commandSuggestions.style.display = 'none';
+                selectedSuggestionIndex = -1;
+            } else if (e.key === 'ArrowUp' && suggestions.length > 0) {
+                e.preventDefault();
+                selectedSuggestionIndex = Math.max(0, selectedSuggestionIndex - 1);
+                updateSelectedSuggestion(suggestions);
+            } else if (e.key === 'ArrowDown' && suggestions.length > 0) {
+                e.preventDefault();
+                selectedSuggestionIndex = Math.min(suggestions.length - 1, selectedSuggestionIndex + 1);
+                updateSelectedSuggestion(suggestions);
+            } else if (e.key === 'Enter' && selectedSuggestionIndex >= 0 && suggestions.length > 0) {
+                e.preventDefault();
+                const selected = suggestions[selectedSuggestionIndex];
+                const cmdName = selected.querySelector('.command-name').textContent;
+                chatInput.value = cmdName + ' ';
+                commandSuggestions.style.display = 'none';
+                chatAutocomplete.textContent = '';
+                selectedSuggestionIndex = -1;
+            }
+        });
+        
+        function updateSelectedSuggestion(suggestions) {
+            suggestions.forEach((s, i) => {
+                if (i === selectedSuggestionIndex) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+        }
+        
+        // Handle form submission
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (isProcessing) return;
+            isProcessing = true;
+            
+            const message = chatInput.value.trim();
+            
+            // Send message to client
+            if (message.length > 0) {
+                try {
+                    fetch(`https://${GetParentResourceName()}/chatMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+                } catch (err) {
+                    // Ignore errors
+                }
+            } else {
+                try {
+                    fetch(`https://${GetParentResourceName()}/closeChat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+                } catch (err) {
+                    // Ignore errors
+                }
+            }
+            
+            // Clear and close immediately
+            chatInput.value = '';
+            closeChat();
+        });
+        
+        // Handle ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && chatContainer.classList.contains('chat-active')) {
+                e.preventDefault();
+                
+                if (isProcessing) return;
+                isProcessing = true;
+                
+                try {
+                    fetch(`https://${GetParentResourceName()}/closeChat`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+                } catch (err) {
+                    // Ignore errors
+                }
+                
+                closeChat();
+            }
+        });
+        
+        // Initialize
+        startFadeTimer();
+    </script>
+</body>
+</html>
