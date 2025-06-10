@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    overflow: hidden;
+}
+
+#playerHUD {
+    position: fixed;
+    bottom: 5px; /* Moved down from 10px to 5px */
+    left: 400px; /* Moved back left from 420px to 400px */
+    display: flex;
+    align-items: flex-end;
+    gap: 0px; /* Reduced from 2px to 0px - no gap */
+    z-index: 100;
+}
+
+#playerHUD.hidden {
+    display: none;
+}
+
+.compass-container {
+    /* Remove background */
+    background: transparent;
+    padding: 15px 0px 15px 5px; /* Removed right padding completely */
+    border-radius: 0;
+    border: none;
+    backdrop-filter: none;
+}
+
+.compass-direction {
+    font-size: 30px; /* Increased for Bebas Neue */
+    font-weight: 400;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 3px;
+    opacity: 1.0; /* Fully visible */
+}
+
+.compass-pipe {
+    color: #808080; /* Grey color for the pipe */
+    opacity: 1.0; /* Fully visible */
+}
+
+.compass-letter {
+    color: #ffffff; /* White color for the direction letter */
+    opacity: 1.0; /* Fully visible */
+}
+
+.info-container {
+    background: transparent; /* Changed to transparent */
+    padding: 10px 15px 10px 5px; /* Reduced left padding from 10px to 5px */
+    border-radius: 0; /* Removed border radius */
+    border: none; /* Removed border */
+    backdrop-filter: none; /* Removed blur effect */
+    min-width: 200px;
+}
+
+.player-info {
+    color: #ffffff; /* White color */
+    font-size: 18px; /* Increased for Bebas Neue */
+    font-weight: 400;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+    opacity: 1.0; /* Fully visible */
+}
+
+#playerId {
+    color: #ffffff; /* Changed to white */
+}
+
+#playTime {
+    color: #ffffff; /* Changed to white */
+}
+
+.voice-info {
+    color: #ffffff; /* White color */
+    font-size: 16px; /* Increased for Bebas Neue */
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+    opacity: 1.0; /* Fully visible */
+}
+
+#voiceMode {
+    color: #ffffff; /* Changed to white */
+    font-weight: 400;
+}
+
+.street-info {
+    color: #ffeb3b; /* Changed back to yellow */
+    font-size: 16px; /* Increased for Bebas Neue */
+    font-weight: 400;
+    margin-bottom: 3px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+    opacity: 1.0; /* Fully visible */
+}
+
+.zone-info {
+    color: #ffffff; /* White color */
+    font-size: 15px; /* Increased for Bebas Neue */
+    opacity: 1.0; /* Fully visible */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    letter-spacing: 1px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#playerHUD:not(.hidden) {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Pulse animation for voice mode change */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.voice-info.pulse {
+    animation: pulse 0.3s ease-out;
+}
+
+/* Responsive design for different screen sizes */
+@media (max-width: 1280px) {
+    #playerHUD {
+        left: 360px; /* Also adjusted for smaller screens from 380px to 360px */
+    }
+}
+
+/* Remove glass effect completely */
+.info-container::before {
+    display: none;
+}

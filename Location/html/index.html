@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Info HUD</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="playerHUD" class="hidden">
+        <div class="compass-container">
+            <div class="compass-direction">
+                <span class="compass-pipe">|</span><span id="compassDirection" class="compass-letter"> N </span><span class="compass-pipe">|</span>
+            </div>
+        </div>
+        <div class="info-container">
+            <div class="player-info">
+                <span id="playerId">1</span> | <span id="playTime">0s</span>
+            </div>
+            <div class="voice-info">
+                Voice: <span id="voiceMode">Normal</span>
+            </div>
+            <div class="street-info" id="streetName">
+                Loading...
+            </div>
+            <div class="zone-info" id="zoneName">
+                Loading...
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
